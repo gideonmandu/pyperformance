@@ -34,24 +34,21 @@ class GVector(object):
     def __add__(self, other):
         if not isinstance(other, GVector):
             raise ValueError("Can't add GVector to " + str(type(other)))
-        v = GVector(self.x + other.x, self.y + other.y, self.z + other.z)
-        return v
+        return GVector(self.x + other.x, self.y + other.y, self.z + other.z)
 
     def __sub__(self, other):
         return self + other * -1
 
     def __mul__(self, other):
-        v = GVector(self.x * other, self.y * other, self.z * other)
-        return v
+        return GVector(self.x * other, self.y * other, self.z * other)
     __rmul__ = __mul__
 
     def linear_combination(self, other, l1, l2=None):
         if l2 is None:
             l2 = 1 - l1
-        v = GVector(self.x * l1 + other.x * l2,
+        return GVector(self.x * l1 + other.x * l2,
                     self.y * l1 + other.y * l2,
                     self.z * l1 + other.z * l2)
-        return v
 
     def __str__(self):
         return "<%f, %f, %f>" % (self.x, self.y, self.z)
@@ -127,13 +124,13 @@ class Spline(object):
 
 
 def write_ppm(im, filename):
-    magic = 'P6\n'
-    maxval = 255
-    w = len(im)
-    h = len(im[0])
-
     with open(filename, "w", encoding="latin1", newline='') as fp:
+        magic = 'P6\n'
         fp.write(magic)
+        maxval = 255
+        w = len(im)
+        h = len(im[0])
+
         fp.write('%i %i\n%i\n' % (w, h, maxval))
         for j in range(h):
             for i in range(w):
@@ -149,8 +146,8 @@ class Chaosgame(object):
         self.thickness = thickness
         self.minx = min([p.x for spl in splines for p in spl.points])
         self.miny = min([p.y for spl in splines for p in spl.points])
-        self.maxx = max([p.x for spl in splines for p in spl.points])
-        self.maxy = max([p.y for spl in splines for p in spl.points])
+        self.maxx = max(p.x for spl in splines for p in spl.points)
+        self.maxy = max(p.y for spl in splines for p in spl.points)
         self.height = self.maxy - self.miny
         self.width = self.maxx - self.minx
         self.num_trafos = []

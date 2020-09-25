@@ -125,11 +125,8 @@ class RBitfield(BitfieldBase):
 
 def printbits(v, n):
     o = ''
-    for i in range(n):
-        if v & 1:
-            o = '1' + o
-        else:
-            o = '0' + o
+    for _ in range(n):
+        o = '1' + o if v & 1 else '0' + o
         v >>= 1
     return o
 
@@ -234,14 +231,6 @@ class HuffmanTable(object):
         raise Exception("unfound symbol, even after end of table @%r"
                         % field.tell())
 
-        for bits in range(self.min_bits, self.max_bits + 1):
-            r = self._find_symbol(bits, field.snoopbits(bits), self.table)
-            if 0 <= r:
-                field.readbits(bits)
-                return r
-            elif bits == self.max_bits:
-                raise "unfound symbol, even after max_bits"
-
 
 class OrderedHuffmanTable(HuffmanTable):
 
@@ -342,8 +331,6 @@ def compute_used(b):
             huffman_used_bitmap = b.readbits(16)
             bit_mask = 1 << 15
             while bit_mask > 0:
-                if huffman_used_bitmap & bit_mask:
-                    pass
                 used += [bool(huffman_used_bitmap & bit_mask)]
                 bit_mask >>= 1
         else:
@@ -356,7 +343,7 @@ def compute_selectors_list(b, huffman_groups):
     selectors_used = b.readbits(15)
     mtf = list(range(huffman_groups))
     selectors_list = []
-    for i in range(selectors_used):
+    for _ in range(selectors_used):
         # zero-terminated bit runs (0..62) of MTF'ed huffman table
         c = 0
         while b.readbits(1):
@@ -374,7 +361,7 @@ def compute_tables(b, huffman_groups, symbols_in_use):
     for j in range(huffman_groups):
         length = b.readbits(5)
         lengths = []
-        for i in range(symbols_in_use):
+        for _ in range(symbols_in_use):
             if not 0 <= length <= 20:
                 raise "Bzip2 Huffman length code outside range 0..20"
             while b.readbits(1):

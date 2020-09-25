@@ -1160,7 +1160,7 @@ def block9():
 
 
 def block10():
-    for i in range(3):
+    for _ in range(3):
         regexs[39].sub(r'', '%3Szxg=ra-HF', subcount[39])
         regexs[40].sub(r'', '-8', subcount[40])
         regexs[10].sub(r'', '-8', subcount[10])
@@ -1314,7 +1314,7 @@ def block10():
 
 
 def block11():
-    for i in range(2):
+    for _ in range(2):
         regexs[18].sub(r'', ' .pybfr', subcount[18])
         regexs[18].sub(r'', ' n.svryqOgaPnapry', subcount[18])
         regexs[18].sub(r'', ' qg', subcount[18])

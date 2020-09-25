@@ -11,7 +11,7 @@ import dulwich.repo
 
 def iter_all_commits(repo):
     # iterate on all changes on the Git repository
-    for entry in repo.get_walker(head):
+    for _ in repo.get_walker(head):
         pass
 
 

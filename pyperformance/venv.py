@@ -97,11 +97,7 @@ def get_venv_program(program):
               "the Python executable %s" % sys.executable)
         sys.exit(1)
 
-    if os.name == 'nt':
-        path = os.path.join(bin_path, program)
-    else:
-        path = os.path.join(bin_path, program)
-
+    path = os.path.join(bin_path, program)
     if not os.path.exists(path):
         print("ERROR: Unable to get the program %r "
               "from the virtual environment %r"
@@ -300,9 +296,8 @@ class VirtualEnvironment(object):
         # python -m ensurepip
         cmd = [venv_python, '-m', 'ensurepip', '--verbose']
         exitcode = self.run_cmd_nocheck(cmd)
-        if not exitcode:
-            if self.get_pip_program() is not None:
-                return True
+        if not exitcode and self.get_pip_program() is not None:
+            return True
 
         # download get-pip.py
         venv_path = self.get_path()
@@ -503,10 +498,7 @@ def cmd_venv(options):
         # show command
         text = "Virtual environment path: %s" % venv_path
         created = venv.exists()
-        if created:
-            text += " (already created)"
-        else:
-            text += " (not created yet)"
+        text += " (already created)" if created else " (not created yet)"
         print(text)
 
         if not created:

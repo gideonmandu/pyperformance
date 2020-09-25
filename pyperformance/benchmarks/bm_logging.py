@@ -150,11 +150,7 @@ if __name__ == "__main__":
     logger.addHandler(handler)
     logger.setLevel(logging.WARNING)
 
-    if options.benchmark:
-        benchmarks = (options.benchmark,)
-    else:
-        benchmarks = sorted(BENCHMARKS)
-
+    benchmarks = (options.benchmark, ) if options.benchmark else sorted(BENCHMARKS)
     for bench in benchmarks:
         name = 'logging_%s' % bench
         bench_func = BENCHMARKS[bench]

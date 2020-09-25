@@ -341,11 +341,7 @@ class WorkTask(Task):
         if pkt is None:
             return self.waitTask()
 
-        if w.destination == I_HANDLERA:
-            dest = I_HANDLERB
-        else:
-            dest = I_HANDLERA
-
+        dest = I_HANDLERB if w.destination == I_HANDLERA else I_HANDLERA
         w.destination = dest
         pkt.ident = dest
         pkt.datum = 0
@@ -376,10 +372,10 @@ def schedule():
 class Richards(object):
 
     def run(self, iterations):
-        for i in range(iterations):
-            taskWorkArea.holdCount = 0
-            taskWorkArea.qpktCount = 0
+        taskWorkArea.holdCount = 0
+        taskWorkArea.qpktCount = 0
 
+        for _ in range(iterations):
             IdleTask(I_IDLE, 1, 10000, TaskState().running(), IdleTaskRec())
 
             wkq = Packet(None, 0, K_WORK)
@@ -407,9 +403,7 @@ class Richards(object):
 
             schedule()
 
-            if taskWorkArea.holdCount == 9297 and taskWorkArea.qpktCount == 23246:
-                pass
-            else:
+            if taskWorkArea.holdCount != 9297 or taskWorkArea.qpktCount != 23246:
                 return False
 
         return True

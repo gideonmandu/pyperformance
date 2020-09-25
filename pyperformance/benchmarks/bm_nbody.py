@@ -76,7 +76,7 @@ PAIRS = combinations(SYSTEM)
 
 
 def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
-    for i in range(n):
+    for _ in range(n):
         for (([x1, y1, z1], v1, m1),
              ([x2, y2, z2], v2, m2)) in pairs:
             dx = x1 - x2

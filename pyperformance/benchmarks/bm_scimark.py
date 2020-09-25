@@ -142,7 +142,7 @@ class ArrayList(Array2D):
 
 
 def SOR_execute(omega, G, cycles, Array):
-    for p in range(cycles):
+    for _ in range(cycles):
         for y in range(1, G.height - 1):
             for x in range(1, G.width - 1):
                 G[x, y] = (omega * 0.25 * (G[x, y - 1] + G[x, y + 1] + G[x - 1, y]
@@ -201,7 +201,7 @@ def bench_SparseMatMult(cycles, N, nz):
 def MonteCarlo(Num_samples):
     rnd = Random(113)
     under_curve = 0
-    for count in range(Num_samples):
+    for _ in range(Num_samples):
         x = rnd.nextDouble()
         y = rnd.nextDouble()
         if x * x + y * y <= 1.0:
@@ -340,11 +340,11 @@ def FFT_bitreverse(N, data):
     j = 0
     for i in range(nm1):
         ii = i << 1
-        jj = j << 1
         k = n >> 1
         if i < j:
             tmp_real = data[ii]
             tmp_imag = data[ii + 1]
+            jj = j << 1
             data[ii] = data[jj]
             data[ii + 1] = data[jj + 1]
             data[jj] = tmp_real
@@ -404,11 +404,7 @@ if __name__ == "__main__":
                                   choices=sorted(BENCHMARKS))
 
     args = runner.parse_args()
-    if args.benchmark:
-        benchmarks = (args.benchmark,)
-    else:
-        benchmarks = sorted(BENCHMARKS)
-
+    benchmarks = (args.benchmark, ) if args.benchmark else sorted(BENCHMARKS)
     for bench in benchmarks:
         name = 'scimark_%s' % bench
         args = BENCHMARKS[bench]

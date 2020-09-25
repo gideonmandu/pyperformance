@@ -188,7 +188,7 @@ def bench_regex_dna(loops, seq, expected_res):
     range_it = range(loops)
     t0 = pyperf.perf_counter()
 
-    for i in range_it:
+    for _ in range_it:
         res = run_benchmarks(seq)
 
     dt = pyperf.perf_counter() - t0

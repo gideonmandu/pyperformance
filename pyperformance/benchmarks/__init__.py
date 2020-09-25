@@ -288,9 +288,8 @@ def BM_mdp(python, options):
 # End benchmarks, begin main entry point support.
 
 def get_benchmarks():
-    bench_funcs = dict((name[3:].lower(), func)
-                       for name, func in globals().items()
-                       if name.startswith("BM_"))
+    bench_funcs = {name[3:].lower(): func for name, func in globals().items()
+                           if name.startswith("BM_")}
 
     bench_groups = BENCH_GROUPS.copy()
 
@@ -312,8 +311,7 @@ def expand_benchmark_name(bm_name, bench_groups):
     expansion = bench_groups.get(bm_name)
     if expansion:
         for name in expansion:
-            for name in expand_benchmark_name(name, bench_groups):
-                yield name
+            yield from expand_benchmark_name(name, bench_groups)
     else:
         yield bm_name
 
@@ -321,12 +319,10 @@ def expand_benchmark_name(bm_name, bench_groups):
 def select_benchmarks(benchmarks, bench_groups):
     legal_benchmarks = bench_groups["all"]
     benchmarks = benchmarks.split(",")
-    positive_benchmarks = set(bm.lower()
-                              for bm in benchmarks
-                              if bm and not bm.startswith("-"))
-    negative_benchmarks = set(bm[1:].lower()
-                              for bm in benchmarks
-                              if bm and bm.startswith("-"))
+    positive_benchmarks = {bm.lower() for bm in benchmarks
+                                  if bm and not bm.startswith("-")}
+    negative_benchmarks = {bm[1:].lower() for bm in benchmarks
+                                  if bm and bm.startswith("-")}
 
     should_run = set()
     if not positive_benchmarks:

@@ -114,13 +114,12 @@ class Repository(Task):
         else:
             cmd = ['hg', 'log', '--template', '{node}|{date|isodate}', '-r', revision]
         stdout = self.get_output(*cmd)
+        node, date = stdout.split('|')
         if GIT:
-            node, date = stdout.split('|')
             date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S %z')
             # convert local date to UTC
             date = (date - date.utcoffset()).replace(tzinfo=datetime.timezone.utc)
         else:
-            node, date = stdout.split('|')
             date = datetime.datetime.strptime(date[:16], '%Y-%m-%d %H:%M')
         return (node, date)
 
@@ -288,11 +287,7 @@ class Python(Task):
             self.run('make')
 
     def install_python(self):
-        if sys.platform in ('darwin', 'win32'):
-            program_ext = '.exe'
-        else:
-            program_ext = ''
-
+        program_ext = '.exe' if sys.platform in ('darwin', 'win32') else ''
         if self.conf.install:
             prefix = self.conf.prefix
             self.app.safe_rmdir(prefix)
@@ -843,11 +838,7 @@ class BenchmarkAll(Application):
         self.logger = logging.getLogger()
 
     def benchmark(self, revision, branch):
-        if branch:
-            key = '%s-%s' % (branch, revision)
-        else:
-            key = revision
-
+        key = '%s-%s' % (branch, revision) if branch else revision
         cmd = [sys.executable, '-m', 'pyperformance', 'compile',
                self.config_filename, revision, branch]
         if not self.conf.update:
