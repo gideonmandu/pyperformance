@@ -58,11 +58,7 @@ if __name__ == "__main__":
     gc.disable()
 
     args = runner.parse_args()
-    if args.benchmark:
-        benchmarks = (args.benchmark,)
-    else:
-        benchmarks = BENCHMARKS
-
+    benchmarks = (args.benchmark, ) if args.benchmark else BENCHMARKS
     for bench in benchmarks:
         name = 'sympy_%s' % bench
         func = globals()['bench_' + bench]

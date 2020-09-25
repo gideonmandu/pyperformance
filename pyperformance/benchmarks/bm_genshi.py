@@ -56,11 +56,7 @@ if __name__ == "__main__":
                                   choices=sorted(BENCHMARKS))
 
     args = runner.parse_args()
-    if args.benchmark:
-        benchmarks = (args.benchmark,)
-    else:
-        benchmarks = sorted(BENCHMARKS)
-
+    benchmarks = (args.benchmark, ) if args.benchmark else sorted(BENCHMARKS)
     for bench in benchmarks:
         name = 'genshi_%s' % bench
         tmpl_cls, tmpl_str = BENCHMARKS[bench]

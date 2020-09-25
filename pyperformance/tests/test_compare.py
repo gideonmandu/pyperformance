@@ -46,10 +46,16 @@ class CompareTests(unittest.TestCase):
             file1 = 'py36.json'
             file2 = kw.get('file2', 'py38.json')
 
-        cmd = [sys.executable, '-m', 'pyperformance', 'compare',
-               os.path.join(DATA_DIR, file1),
-               os.path.join(DATA_DIR, file2)]
-        cmd.extend(args)
+        cmd = [
+            sys.executable,
+            '-m',
+            'pyperformance',
+            'compare',
+            os.path.join(DATA_DIR, file1),
+            os.path.join(DATA_DIR, file2),
+            *args,
+        ]
+
         proc = subprocess.Popen(cmd,
                                 stdout=subprocess.PIPE,
                                 universal_newlines=True)

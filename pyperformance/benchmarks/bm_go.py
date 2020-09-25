@@ -1,6 +1,7 @@
 """
 Go board game
 """
+
 import math
 import random
 
@@ -13,7 +14,7 @@ KOMI = 7.5
 EMPTY, WHITE, BLACK = 0, 1, 2
 SHOW = {EMPTY: '.', WHITE: 'o', BLACK: 'x'}
 PASS = -1
-MAXMOVES = SIZE * SIZE * 3
+MAXMOVES = SIZE**2 * 3
 TIMESTAMP = 0
 MOVES = 0
 
@@ -178,16 +179,13 @@ class Board:
         self.black_dead = 0
 
     def move(self, pos):
-        square = self.squares[pos]
         if pos != PASS:
+            square = self.squares[pos]
             square.move(self.color)
             self.emptyset.remove(square.pos)
         elif self.lastmove == PASS:
             self.finished = True
-        if self.color == BLACK:
-            self.color = WHITE
-        else:
-            self.color = BLACK
+        self.color = WHITE if self.color == BLACK else BLACK
         self.lastmove = pos
         self.history.append(pos)
 
@@ -245,10 +243,7 @@ class Board:
             self.move(pos)
 
     def score(self, color):
-        if color == WHITE:
-            count = KOMI + self.black_dead
-        else:
-            count = self.white_dead
+        count = KOMI + self.black_dead if color == WHITE else self.white_dead
         for square in self.squares:
             squarecolor = square.color
             if squarecolor == color:
@@ -364,7 +359,7 @@ class UCTNode:
 
     def random_playout(self, board):
         """ random play until both players pass """
-        for x in range(MAXMOVES):  # XXX while not self.finished?
+        for _ in range(MAXMOVES):  # XXX while not self.finished?
             if board.finished:
                 break
             board.move(board.random_move())
@@ -373,10 +368,7 @@ class UCTNode:
         """ update win/loss count along path """
         wins = board.score(BLACK) >= board.score(WHITE)
         for node in path:
-            if color == BLACK:
-                color = WHITE
-            else:
-                color = BLACK
+            color = WHITE if color == BLACK else BLACK
             if wins == (color == BLACK):
                 node.wins += 1
             else:
@@ -437,7 +429,7 @@ def computer_move(board):
     tree = UCTNode()
     tree.unexplored = board.useful_moves()
     nboard = Board()
-    for game in range(GAMES):
+    for _ in range(GAMES):
         node = tree
         nboard.reset()
         nboard.replay(board.history)

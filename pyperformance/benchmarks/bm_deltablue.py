@@ -611,7 +611,7 @@ def change(v, new_value):
 
     plan = planner.extract_plan_from_constraints(edits)
 
-    for i in range(10):
+    for _ in range(10):
         v.value = new_value
         plan.execute()
 

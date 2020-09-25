@@ -49,11 +49,7 @@ def build_xml_tree(etree):
 def process(etree, xml_root=None):
     SubElement = etree.SubElement
 
-    if xml_root is not None:
-        root = xml_root
-    else:
-        root = build_xml_tree(etree)
-
+    root = xml_root if xml_root is not None else build_xml_tree(etree)
     # find*()
     found = sum(child.find('.//deepleaf') is not None
                 for child in root)
@@ -84,9 +80,9 @@ def process(etree, xml_root=None):
     for child in root.iterfind('.//subchild'):
         SubElement(target, child.tag, attr=child.text).text = "found"
 
-    if (len(target) < len(root)
-            or not all(el.text == 'found'
-                       for el in target.iterfind('subchild'))):
+    if len(target) < len(root) or any(
+        el.text != 'found' for el in target.iterfind('subchild')
+    ):
         raise RuntimeError("transform #2 failed")
 
     # moving subtrees around
@@ -108,7 +104,7 @@ def process(etree, xml_root=None):
         for sub in child.iter():
             tags.append(sub)
 
-    check_dict = dict((n, iter(ch)) for n, ch in d.items())
+    check_dict = {n: iter(ch) for n, ch in d.items()}
     target = SubElement(dest, 'transform-2')
     for child in root:
         tags = check_dict[child.get('tag_type')]

@@ -27,11 +27,7 @@ def Relative(*path):
 
 
 def run_command(command, hide_stderr=True):
-    if hide_stderr:
-        kw = {'stderr': subprocess.PIPE}
-    else:
-        kw = {}
-
+    kw = {'stderr': subprocess.PIPE} if hide_stderr else {}
     logging.info("Running `%s`",
                  " ".join(list(map(str, command))))
 
@@ -110,11 +106,7 @@ def run_benchmarks(bench_funcs, should_run, cmd_prefix, options):
         sys.stdout.flush()
 
         def add_bench(dest_suite, obj):
-            if isinstance(obj, pyperf.BenchmarkSuite):
-                benchmarks = obj
-            else:
-                benchmarks = (obj,)
-
+            benchmarks = obj if isinstance(obj, pyperf.BenchmarkSuite) else (obj, )
             version = pyperformance.__version__
             for bench in benchmarks:
                 bench.update_metadata({'performance_version': version})

@@ -95,7 +95,7 @@ def flip(ido, fd={E: E, NE: SE, NW: SW, W: W, SW: NW, SE: NE}):
 
 def permute(ido, r_ido, rotate=rotate, flip=flip):
     ps = [ido]
-    for r in range(DIR_NO - 1):
+    for _ in range(DIR_NO - 1):
         ps.append(rotate(ps[-1]))
         if ido == r_ido:                 # C2-symmetry
             ps = ps[0:DIR_NO // 2]
@@ -117,7 +117,7 @@ def get_footprints(board, cti, pieces):
     for c in board:
         for pi, p in enumerate(pieces):
             for pp in p:
-                fp = frozenset([cti[c + o] for o in pp if (c + o) in cti])
+                fp = frozenset(cti[c + o] for o in pp if (c + o) in cti)
                 if len(fp) == 5:
                     fps[min(fp)][pi].append(fp)
     return fps
@@ -125,18 +125,15 @@ def get_footprints(board, cti, pieces):
 
 def get_senh(board, cti):
     '''-> south-east neighborhood'''
-    se_nh = []
     nh = [E, SW, SE]
-    for c in board:
-        se_nh.append(frozenset([cti[c + o] for o in nh if (c + o) in cti]))
-    return se_nh
+    return [frozenset(cti[c + o] for o in nh if (c + o) in cti) for c in board]
 
 
 def get_puzzle(width, height):
     board = [E * x + S * y + (y % 2)
              for y in range(height)
              for x in range(width)]
-    cti = dict((board[i], i) for i in range(len(board)))
+    cti = {board[i]: i for i in range(len(board))}
 
     # Incremental direction offsets
     idos = [[E, E, E, SE],

@@ -202,7 +202,7 @@ def bench_unpickle_list(loops, pickle, options):
     return pyperf.perf_counter() - t0
 
 
-MICRO_DICT = dict((key, dict.fromkeys(range(10))) for key in range(100))
+MICRO_DICT = {key: dict.fromkeys(range(10)) for key in range(100)}
 
 
 def bench_pickle_dict(loops, pickle, options):
@@ -266,17 +266,16 @@ if __name__ == "__main__":
     if options.pure_python:
         name += "_pure_python"
 
-    if not (options.pure_python or IS_PYPY):
-        # C accelerators are enabled by default on 3.x
-        import pickle
-        if is_module_accelerated(pickle):
-            raise RuntimeError("Missing C accelerators for pickle")
-    else:
+    if (options.pure_python or IS_PYPY):
         sys.modules['_pickle'] = None
-        import pickle
         if not is_module_accelerated(pickle):
             raise RuntimeError("Unexpected C accelerators for pickle")
 
+    else:
+        if is_module_accelerated(pickle):
+            raise RuntimeError("Missing C accelerators for pickle")
+    # C accelerators are enabled by default on 3.x
+    import pickle
     if options.protocol is None:
         options.protocol = pickle.HIGHEST_PROTOCOL
     runner.metadata['pickle_protocol'] = str(options.protocol)

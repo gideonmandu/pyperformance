@@ -204,8 +204,8 @@ class Canvas(object):
         self.bytes[i + 2] = max(0, min(255, int(b * 255)))
 
     def write_ppm(self, filename):
-        header = 'P6 %d %d 255\n' % (self.width, self.height)
         with open(filename, "wb") as fp:
+            header = 'P6 %d %d 255\n' % (self.width, self.height)
             fp.write(header.encode('ascii'))
             fp.write(self.bytes.tostring())
 
@@ -214,9 +214,12 @@ def firstIntersection(intersections):
     result = None
     for i in intersections:
         candidateT = i[1]
-        if candidateT is not None and candidateT > -EPSILON:
-            if result is None or candidateT < result[1]:
-                result = i
+        if (
+            candidateT is not None
+            and candidateT > -EPSILON
+            and (result is None or candidateT < result[1])
+        ):
+            result = i
     return result
 
 
@@ -288,11 +291,7 @@ class Scene(object):
         return True
 
     def visibleLights(self, p):
-        result = []
-        for l in self.lightPoints:
-            if self._lightIsVisible(l, p):
-                result.append(l)
-        return result
+        return [l for l in self.lightPoints if self._lightIsVisible(l, p)]
 
 
 def addColours(a, scale, b):
@@ -326,7 +325,7 @@ class SimpleSurface(object):
             for lightPoint in scene.visibleLights(p):
                 contribution = (lightPoint - p).normalized().dot(normal)
                 if contribution > 0:
-                    lambertAmount = lambertAmount + contribution
+                    lambertAmount += contribution
             lambertAmount = min(1, lambertAmount)
             c = addColours(c, self.lambertCoefficient * lambertAmount, b)
 
@@ -358,7 +357,7 @@ def bench_raytrace(loops, width, height, filename):
     range_it = range(loops)
     t0 = pyperf.perf_counter()
 
-    for i in range_it:
+    for _ in range_it:
         canvas = Canvas(width, height)
         s = Scene()
         s.addLight(Point(30, 30, 10))

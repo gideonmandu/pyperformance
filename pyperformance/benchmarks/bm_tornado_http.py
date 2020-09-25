@@ -32,7 +32,7 @@ class MainHandler(RequestHandler):
 
     @coroutine
     def get(self):
-        for i in range(NCHUNKS):
+        for _ in range(NCHUNKS):
             self.write(CHUNK)
             yield self.flush()
 
